@@ -1,119 +1,102 @@
-# 🚀 Zeroly — Hyperlocal Community Reuse Platform
+# 🚀 Zeroly — Hyperlocal Community Reuse & Swap Platform
 
-> **Triwizardthon Hackathon Project** by the **Dumbledore Devs** team.  
-> *Turn unused goods into community good and lead a zero-waste lifestyle.*
+*Turn unused goods into community good, lead a zero-waste lifestyle, and gamify sustainability.*
+
+<div align="center">
+
+[![Team](https://img.shields.io/badge/Team-Dumbledore%20Devs-emerald?style=for-the-badge)](https://github.com)
+[![Event](https://img.shields.io/badge/Hackathon-Triwizardthon%20Project-blueviolet?style=for-the-badge)](https://github.com)
+[![Framework](https://img.shields.io/badge/Vite-React%2019-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
+[![Server](https://img.shields.io/badge/Express-Node.js-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
+
+</div>
 
 ---
 
 ## 🌟 About the Project
 
-**Zeroly** is a modern, premium hyperlocal SaaS platform where community members can give away, request, or swap usable items with neighbors. Built for high performance, ease-of-use, and visual excellence, Zeroly gamifies sustainability, bringing people closer through sharing while promoting a **zero-waste footprint**.
+**Zeroly** is a state-of-the-art, high-performance hyperlocal community reuse and swap marketplace. Built for maximum speed, ease of use, and premium aesthetics, Zeroly gamifies the zero-waste process. It enables neighbors to effortlessly swap, request, and donate usable goods within their immediate vicinity—fostering community bond and shrinking carbon footprints.
 
-### ✨ Core Features
+### ✨ Key Features
 
-*   📍 **Geospatial Map Integration & Picker**: Interactive Leaflet maps combined with autocomplete-driven location inputs that let users set precise coordinates for items they upload or seek.
-*   🔐 **Advanced Dual Auth System**: Ultra-secure authentication featuring traditional JWT credentials along with seamless **Google Sign-In Authentication** via Google OAuth 2.0.
-*   ☁️ **Optimized Media Pipeline**: High-performance image uploads via **Cloudinary**, reinforced with backend-validated rate limits, file size filters, and error handlers.
-*   🏆 **Gamified Leaderboard & Eco-Progress**: Live leaderboard highlighting top community donors, styled with premium progress bars (`shadcn/ui`) and zero-waste rewards.
-*   💬 **Real-time Peer-to-Peer Communication**: Chat system built using **Socket.io** enabling direct messaging between interested item takers and donors.
-*   🙋 **Modern Glassmorphic Help & FAQs**: Fully responsive FAQ explorer featuring sleek, custom accordion animations and micro-interactions.
-*   🎨 **Premium UI/UX System**: Stunning glassmorphism design tokens constructed with Tailwind CSS v4, smooth animations powered by `framer-motion`, and custom-tailored `shadcn/ui` controls.
+- 📍 **Geospatial Map Integration & Picker**: Dynamic maps powered by **Leaflet** combined with autocomplete-driven search inputs. Users drop a precise pin on their location to search or list goods within a customized radius.
+- 🔐 **Secure Dual Auth System**: Enterprise-grade security featuring traditional email-password authentication (secured with bcrypt & JWT tokens) alongside seamless single-click **Google Sign-In OAuth 2.0**.
+- ☁️ **Optimized Media Pipeline**: High-performance, direct-to-cloud image uploads powered by **Cloudinary**. Hardened with rate limits, file size filters, and robust server-side error handlers.
+- 🏆 **Gamified EcoCoin Economy & Leaderboards**: Incentive-based gameplay using **EcoCoins**. Earn points by registering, listing items, and completing community handovers to climb through a dynamic tier hierarchy.
+- 💬 **Real-time Peer-to-Peer Chat**: Instant, low-latency communication channel powered by **Socket.io** enabling donors and takers to coordinate handovers in real time.
+- 🙋 **Glassmorphic Interactive FAQ Center**: An extremely responsive, fluid FAQ dashboard containing micro-interactions and smooth accordion animations.
+- 🎨 **Premium UI/UX System**: Elegant glassmorphic interface built using Tailwind CSS v4, smooth physics-based micro-animations via `framer-motion`, and custom UI controls from `@base-ui/react` and `lucide-react`.
+
+---
+
+## 🏗️ System Architecture & Workflow
+
+Zeroly utilizes a modern microservice-inspired architecture where the React SPA securely communicates with a Node/Express REST & WebSocket gateway. Real-time events, file systems, and databases are seamlessly integrated to guarantee high performance and scalability.
+
+```mermaid
+graph TD
+    subgraph Client Space [React Client - Tailwind CSS & Leaflet]
+        A[Browser UI / Maps] <-->|HTTP Requests / Axios| B(Auth Context & API Handlers)
+        A <-->|Socket.io-Client| C(Real-time Chat Portal)
+    end
+
+    subgraph API & Gateway [Express & Node.js Engine]
+        B <-->|REST Endpoints / JWT / Rate Limits| D[API Routers]
+        C <-->|Real-time Events / WebSockets| E[Socket.io Gateway]
+        D -->|Controllers & Middleware| F[Business Logic Controllers]
+    end
+
+    subgraph Service & Persistence Layer [Integrations & Storage]
+        F <-->|Mongoose Queries & Geospatial Indexing| G[(MongoDB Atlas)]
+        F <-->|Direct Secure Streams| H(Cloudinary Storage)
+        F <-->|Token Verification| I[Google OAuth API]
+    end
+```
+
+---
+
+## 🏆 The EcoCoin Economy & Progress Tiers
+
+Zeroly encourages zero-waste behaviors by gamifying community engagement with **EcoCoins**. Users earn coins by performing environment-friendly actions and climb the community leaderboard.
+
+### 🪙 Earning EcoCoins
+
+| Activity | EcoCoins Impact | Description |
+| :--- | :---: | :--- |
+| **New Account Registration** | `+1 EcoCoin` | Awarded instantly upon registering via email/password or Google Auth. |
+| **Listing an Item** | `+5 EcoCoins` | Granted once you upload and publish a usable item for the community. |
+| **Deleting a Listed Item** | `-5 EcoCoins` | Deducted when you retract or remove a listing from the dashboard. |
+| **Successful Community Donation** | `+10 EcoCoins` | Awarded to the donor when a request is marked as "Accepted" and completed. |
+
+### 🌱 Progressive Impact Tiers
+
+Users display their commitment to sustainability through 4 distinct ranks displayed dynamically on their dashboard and the global leaderboard:
+
+1. **🌱 Seed** (`0 - 20 EcoCoins`): The journey begins. Represented by an amber Leaf icon.
+2. **🌿 Sprout** (`21 - 50 EcoCoins`): Growing contribution. Represented by a green Sprout icon.
+3. **🌳 Bloom** (`51 - 150 EcoCoins`): Highly active community pillar. Represented by an emerald TreePine icon.
+4. **👑 Canopy** (`151+ EcoCoins`): Master eco-warrior. Represented by a gold Crown icon.
 
 ---
 
 ## 🛠️ The Tech Stack
 
 ### Frontend Architecture
-*   **Core**: [React 19](https://react.dev/) & [Vite](https://vitejs.dev/)
-*   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [Framer Motion](https://www.framer.com/motion/)
-*   **UI Components**: Custom `@base-ui/react` and `lucide-react` tailored widgets
-*   **Maps**: [Leaflet](https://leafletjs.com/) & `react-leaflet`
-*   **OAuth**: `@react-oauth/google`
-*   **Slider/Carousels**: `Swiper`
-*   **Realtime/API**: `socket.io-client` & `axios`
+- **Framework & Build**: [React 19](https://react.dev/) & [Vite](https://vitejs.dev/)
+- **Styling & UI Widgets**: [Tailwind CSS v4](https://tailwindcss.com/) & `@base-ui/react`
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) (smooth transitions & spring actions)
+- **Maps & Geolocation**: [Leaflet](https://leafletjs.com/) & `react-leaflet`
+- **Authentication**: `@react-oauth/google` (Google OAuth 2.0 Integration)
+- **Data Channels**: `axios` for HTTP API & `socket.io-client` for WebSockets
 
 ### Backend Infrastructure
-*   **Runtime**: [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/)
-*   **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas/database) & [Mongoose ORM](https://mongoosejs.com/)
-*   **Auth**: `jsonwebtoken` & `bcryptjs`
-*   **Storage**: [Cloudinary](https://cloudinary.com/) (using `multer` and `multer-storage-cloudinary`)
-*   **Security & Gatekeeping**: `express-rate-limit` for DDoS prevention and API protection
-*   **Realtime**: `socket.io`
-
----
-
-## 🚀 Getting Started
-
-Follow these step-by-step setup instructions to configure and run Zeroly in your local environment.
-
-### 📋 Prerequisites
-
-Make sure you have the following installed on your machine:
-*   [Node.js](https://nodejs.org/) (v18.x or higher)
-*   `npm` (v9.x or higher)
-*   A MongoDB Atlas database instance
-*   A Cloudinary media storage account
-*   A Google Cloud Developer console project (for Google Auth credentials)
-
----
-
-### 🖥️ Backend Configuration & Launch
-
-1.  **Navigate into the `server` directory:**
-    ```bash
-    cd server
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Setup Environment Variables:**  
-    Create a `.env` file in the root of the `server/` directory and configure the variables as follows:
-    ```env
-    PORT=5001
-    MONGO_URI=your_mongodb_atlas_connection_string
-    JWT_SECRET=your_jwt_signing_secret_string
-    CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-    CLOUDINARY_API_KEY=your_cloudinary_api_key
-    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-    GOOGLE_CLIENT_ID=your_google_oauth_client_id
-    ```
-
-4.  **Run in Development Mode:**
-    ```bash
-    npm run dev
-    ```
-    > The backend REST API server will run at `http://localhost:5001/api` and socket endpoints at `http://localhost:5001`.
-
----
-
-### 🎨 Frontend Configuration & Launch
-
-1.  **Navigate into the `client` directory:**
-    ```bash
-    cd client
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Setup Environment Variables:**  
-    Create a `.env` file in the root of the `client/` directory and configure it:
-    ```env
-    VITE_API_URL=http://localhost:5001/api
-    VITE_SOCKET_URL=http://localhost:5001
-    VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
-    ```
-
-4.  **Start Development Server:**
-    ```bash
-    npm run dev
-    ```
-    > The client web app will open at `http://localhost:5173`.
+- **Runtime & Web Server**: [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/)
+- **Database Engine**: [MongoDB Atlas](https://www.mongodb.com/) & [Mongoose ORM](https://mongoosejs.com/) (using geospatial indices `2dsphere`)
+- **Real-Time Communication**: `socket.io` for bi-directional chat syncing
+- **Security & Authorization**: `jsonwebtoken` & `bcryptjs`
+- **Media Pipeline**: `multer` with `multer-storage-cloudinary` for cloud-hosted files
+- **Security Protections**: `express-rate-limit` for DDoS prevention and API protection
 
 ---
 
@@ -121,32 +104,172 @@ Make sure you have the following installed on your machine:
 
 ```
 Zeroly/
-├── client/                     # Frontend Application
+├── client/                     # Frontend Client Engine
 │   ├── src/
-│   │   ├── components/         # Reusable widgets (UI, ModeToggle, Hero, MapPicker...)
-│   │   ├── lib/                # Utility modules (utils.js)
-│   │   ├── pages/              # Views (HomePage, ExplorePage, LeaderboardPage, FAQPage...)
-│   │   ├── App.jsx             # React routing setup
-│   │   └── index.css           # Global design variables & Tailwind imports
-│   ├── package.json
-│   └── vite.config.js
-├── server/                     # Backend API & Gateway
-│   ├── controllers/            # Request handlers (itemController, userController...)
-│   ├── models/                 # Database Schema definitions (Item, User, Request)
-│   ├── routes/                 # Express REST Endpoints
-│   ├── index.js                # Server main entrypoint & Socket initialization
-│   └── package.json
-└── README.md
+│   │   ├── api.js              # Centralized Axios API Config
+│   │   ├── socket.js           # Socket.io Client Connection Setup
+│   │   ├── components/         # Premium Reusable UI Controls
+│   │   │   ├── ui/             # Custom shadcn widgets (Progress, Buttons, etc.)
+│   │   │   ├── Header.jsx      # Sticky Navigation Bar with User Profile Link
+│   │   │   ├── Footer.jsx      # Modern Semantic Bottom Bar
+│   │   │   ├── ItemCard.jsx    # Card representation of items with interactive actions
+│   │   │   └── MapPicker.jsx   # Geolocation picker utilizing Leaflet Maps
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx # Global Authentication & State Context
+│   │   ├── pages/              # Fully Rendered View Pages
+│   │   │   ├── HomePage.jsx    # Glassmorphic Landing Page with CTAs
+│   │   │   ├── ExplorePage.jsx # Hyperlocal Maps & Category filter explorer
+│   │   │   ├── UploadPage.jsx  # Multi-step item upload form with Map Picker
+│   │   │   ├── LoginPage.jsx   # Credentials & Google Auth Sign-in Page
+│   │   │   ├── RegisterPage.jsx# Custom User Registration View
+│   │   │   ├── ProfilePage.jsx # Gamified EcoCoin Dashboard with Listed Items
+│   │   │   ├── RequestsDashboard.jsx # Sent/Received Request tracker
+│   │   │   ├── ChatPage.jsx    # Real-time message exchange window
+│   │   │   ├── LeaderboardPage.jsx # Global eco ranking of Dumbledore Devs
+│   │   │   └── FAQPage.jsx     # Accordion interactive help interface
+│   │   └── index.css           # Global Style variables & Tailwind CSS setup
+│   ├── package.json            # Frontend dependency specifications
+│   └── vite.config.js          # Vite compilation config
+│
+├── server/                     # Backend API Server
+│   ├── config/                 # Storage & Database Connections (DB, Cloudinary)
+│   ├── controllers/            # Controller Handlers (Business Logic)
+│   │   ├── chatController.js   # Manage Socket rooms & retrieve history
+│   │   ├── itemController.js   # CRUD + Search (Geospatial $near queries)
+│   │   ├── requestController.js# Donation Requests & EcoCoin distribution
+│   │   ├── userController.js   # OAuth & Credentials Auth management
+│   │   └── leaderboardController.js # Ranks and aggregates users by points
+│   ├── middleware/             # Route Guards & Preprocessors
+│   │   ├── authMiddleware.js   # JWT verification & User context parsing
+│   │   └── rateLimiter.js      # API Protection against spam/DDoS
+│   ├── models/                 # Mongoose Database Schema Models
+│   │   ├── User.js             # User Accounts & Points Tracker
+│   │   ├── Item.js             # Product/Item Schema with Geospatial Indexing
+│   │   ├── Request.js          # Exchange & Donation requests
+│   │   ├── Chat.js             # Conversational threads
+│   │   └── Message.js          # Message schema containing conversational text
+│   ├── routes/                 # REST Route Gateway mapping
+│   ├── index.js                # App entrypoint (Express setup + Socket server)
+│   └── package.json            # Server-side packages & scripts
+└── README.md                   # Project Documentation
 ```
+
+---
+
+## 🚀 Step-by-Step Installation & Local Setup
+
+### 📋 Prerequisites
+Ensure you have the following installed on your machine:
+- **Node.js** (v18.x or higher)
+- **npm** (v9.x or higher)
+- A **MongoDB Atlas** database cluster
+- A **Cloudinary** media storage account
+- A Google Cloud Developer project with **Google OAuth 2.0 Credentials** activated
+
+---
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/yourusername/zeroly.git
+cd zeroly
+```
+
+### 2️⃣ Backend Configuration & Start
+1. **Navigate to the server directory:**
+   ```bash
+   cd server
+   ```
+2. **Install all server-side dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Configure Environment Variables:**  
+   Create a `.env` file in the root of the `server/` directory and configure the variables as follows:
+   ```env
+   # Server Connection Settings
+   PORT=5001
+   
+   # Database Persistence Link
+   MONGO_URI=your_mongodb_atlas_connection_string
+   
+   # JWT Cryptography Keys
+   JWT_SECRET=your_jwt_signing_secret_string
+   
+   # Cloudinary Media Storage Accounts
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   
+   # Google Cloud Identity credentials for OAuth
+   GOOGLE_CLIENT_ID=your_google_oauth_client_id
+   ```
+4. **Fire Up in Development Mode:**
+   ```bash
+   npm run dev
+   ```
+   > ⚙️ **Status**: The backend REST API server runs at `http://localhost:5001/api` and socket endpoints run at `http://localhost:5001`.
+
+---
+
+### 3️⃣ Frontend Configuration & Start
+1. **Navigate to the client directory in a new terminal window:**
+   ```bash
+   cd client
+   ```
+2. **Install all frontend dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Configure Environment Variables:**  
+   Create a `.env` file in the root of the `client/` directory and populate:
+   ```env
+   # Client API Gateways
+   VITE_API_URL=http://localhost:5001/api
+   VITE_SOCKET_URL=http://localhost:5001
+   
+   # Google OAuth 2.0 Integration ID
+   VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+   ```
+4. **Fire Up the Vite Server:**
+   ```bash
+   npm run dev
+   ```
+   > 🎨 **Status**: The client web application will load, accessible locally at `http://localhost:5173`.
+
+---
+
+## 📡 API Endpoints Reference
+
+### 🔐 Authentication Routes (`/api/users`)
+- `POST /register`: Registers a new user. Awards **+1 EcoCoin**.
+- `POST /login`: Logs in using email/password. Returns JWT access token.
+- `POST /google-login`: Validates Google ID tokens and registers or logs in user.
+- `GET /profile`: Private endpoint. Returns user details, listed items, points, and tier status.
+
+### 📦 Items Routes (`/api/items`)
+- `GET /`: Retrieves available items. Accepts query parameters: `keyword`, `category`, `lat`, `lng`, `radius` (in km, performs geospatial queries).
+- `POST /`: Private. Creates an item listing. Upgrades user score (**+5 EcoCoins**).
+- `GET /:id`: Retrieves detailed profile of a listed item.
+- `DELETE /:id`: Private. Removes item. Deducts points (**-5 EcoCoins**).
+- `POST /:id/reviews`: Private. Adds custom rating/review to item.
+
+### 🤝 Donation Requests (`/api/requests`)
+- `POST /`: Private. Requests a specific item.
+- `GET /sent`: Private. Tracks user's active requests sent to donors.
+- `GET /received`: Private. Track requests received on user's listings.
+- `PUT /:id`: Private. Approves/Rejects a request. If marked "Accepted", item status switches to "given", and donor receives **+10 EcoCoins**.
+
+### 🏆 Leaderboard (`/api/leaderboard`)
+- `GET /`: Retrieves global ranking order of users sorted by cumulative EcoCoins points.
 
 ---
 
 ## 🧑‍💻 The Dumbledore Devs Team
 
-*   🛡️ **Samarth Khare** — Team Leader
-*   ✨ **Sneha** — Core Developer
-*   ⚡ **Shivam Gupta** — Core Developer
-*   🌟 **Prateek Amar Batham** — Core Developer
+*   🛡️ **Samarth Khare** — Team Leader & Architect
+*   ✨ **Sneha** — Core UI Developer
+*   ⚡ **Shivam Gupta** — Core Backend Engineer
+*   🌟 **Prateek Amar Batham** — Core Full-Stack Integration Developer
 
 ---
 
