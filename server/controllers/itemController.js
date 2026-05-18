@@ -22,7 +22,7 @@ export const getItemById = async(req, res) => {
 
 export const createItem = async(req, res) => {
     try {
-        const { name, description, category, imageUrl, address } = req.body;
+        const { name, description, category, imageUrl, address, location } = req.body;
 
         const item = new Item({
             name,
@@ -30,6 +30,7 @@ export const createItem = async(req, res) => {
             category,
             imageUrl,
             address,
+            location: location ? { type: 'Point', coordinates: location } : undefined,
             user: req.user._id,
         });
 
@@ -53,15 +54,47 @@ export const createItem = async(req, res) => {
 
 export const getItems = async(req, res) => {
     try {
-        const keyword = req.query.keyword ? {
-            $or: [
-                { name: { $regex: req.query.keyword, $options: "i" } },
-                { category: { $regex: req.query.keyword, $options: "i" } },
-            ],
-        } : {};
+        const { keyword, category, lat, lng, radius, page = 1 } = req.query;
+        let query = { status: { $in: ['available', null] } };
 
-        const items = await Item.find({...keyword }).sort({ createdAt: -1 });
-        res.json(items);
+        if (keyword) {
+            query.$or = [
+                { name: { $regex: keyword, $options: "i" } },
+                { category: { $regex: keyword, $options: "i" } },
+            ];
+        }
+
+        if (category) {
+            query.category = category;
+        }
+
+        if (lat && lng && radius) {
+            query.location = {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [parseFloat(lng), parseFloat(lat)]
+                    },
+                    $maxDistance: parseFloat(radius) * 1000 // Convert km to meters
+                }
+            };
+        }
+
+        const pageSize = 12;
+        const pageNum = Number(page) || 1;
+
+        const total = await Item.countDocuments(query);
+        const items = await Item.find(query)
+            .sort({ createdAt: -1 })
+            .skip(pageSize * (pageNum - 1))
+            .limit(pageSize);
+
+        res.json({
+            items,
+            page: pageNum,
+            pages: Math.ceil(total / pageSize),
+            total
+        });
     } catch (error) {
         console.error("Error fetching items:", error);
         res

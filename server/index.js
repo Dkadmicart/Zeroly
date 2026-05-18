@@ -39,10 +39,30 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 
+import rateLimit from 'express-rate-limit';
+
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 500, // Limit each IP to 500 requests per 15 mins
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many requests from this IP, please try again after 15 minutes' }
+});
+
+const strictUploadLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20, // Limit each IP to 20 uploads/signatures per hour
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Upload limit reached. Please try again in an hour.' }
+});
+
+app.use('/api', apiLimiter);
+
 app.get('/', (req, res) => res.send('API is running'));
 app.use('/api/items', itemRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/upload', uploadRoutes);
+app.use('/api/upload', strictUploadLimiter, uploadRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);

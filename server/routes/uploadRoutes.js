@@ -1,29 +1,34 @@
 // server/routes/uploadRoutes.js
 import express from "express";
-import multer from "multer";
 import cloudinary from "../config/cloudinary.js";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: "zeroly",
-        format: async(req, file) => "jpg",
-        public_id: (req, file) => file.originalname,
-    },
-});
-
-const parser = multer({ storage: storage });
-
-
-router.post("/", protect, parser.single("image"), (req, res) => {
-    res.status(201).json({
-        message: "Image uploaded successfully",
-        imageUrl: req.file.path,
-    });
+router.get("/signature", protect, (req, res) => {
+    try {
+        const timestamp = Math.round(new Date().getTime() / 1000);
+        
+        const paramsToSign = {
+            timestamp: timestamp,
+            folder: "zeroly"
+        };
+        
+        const signature = cloudinary.utils.api_sign_request(
+            paramsToSign, 
+            cloudinary.config().api_secret
+        );
+        
+        res.status(200).json({
+            signature,
+            timestamp,
+            apiKey: cloudinary.config().api_key,
+            cloudName: cloudinary.config().cloud_name
+        });
+    } catch (error) {
+        console.error("Signature generation error:", error);
+        res.status(500).json({ message: "Failed to generate upload signature" });
+    }
 });
 
 export default router;

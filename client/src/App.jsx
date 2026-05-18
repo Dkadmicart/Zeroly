@@ -8,9 +8,10 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop"; 
-
+import { Toaster } from "@/components/ui/sonner";
 
 import HomePage from "./pages/HomePage";
+import ExplorePage from "./pages/ExplorePage";
 import UploadPage from "./pages/UploadPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -29,7 +30,7 @@ function App() {
   console.log("API Base URL:", import.meta.env.VITE_API_URL);
   return (
     
-    <div className="font-sans flex flex-col min-h-screen">
+    <div className="font-sans flex flex-col min-h-screen bg-background text-foreground">
       <Header />
 
      
@@ -39,6 +40,7 @@ function App() {
         <Routes>
         
           <Route path="/" element={<HomePage />} />
+          <Route path="/explore" element={<ExplorePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/item/:id" element={<ItemDetailsPage />} />
@@ -65,6 +67,7 @@ function App() {
       </main>
 
       <Footer />
+      <Toaster />
     </div>
   );
 }

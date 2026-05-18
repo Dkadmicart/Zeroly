@@ -20,11 +20,29 @@ const itemSchema = new mongoose.Schema({
     imageUrl: { type: String, required: true },
     address: { type: String, required: true },
 
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point'
+        },
+        coordinates: {
+            type: [Number],
+            default: [0, 0] // [longitude, latitude]
+        }
+    },
+    status: {
+        type: String,
+        enum: ['available', 'requested', 'given'],
+        default: 'available'
+    },
 
     reviews: [reviewSchema],
     numReviews: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0 },
 }, { timestamps: true });
+
+itemSchema.index({ location: "2dsphere" });
 
 
 itemSchema.methods.calcRating = function() {

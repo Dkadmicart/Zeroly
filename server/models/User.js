@@ -13,7 +13,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+    },
+    authProvider: {
+        type: String,
+        default: 'local',
     },
 
     itemCount: {

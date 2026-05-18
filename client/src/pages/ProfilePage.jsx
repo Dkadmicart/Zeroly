@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import ItemCard from "../components/ItemCard";
 import api from "../api.js";
-
-
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { User, Mail, Package } from "lucide-react";
 
 const API_BASE_URL = "http://localhost:5001/api"; 
 
@@ -30,6 +34,7 @@ const ProfilePage = () => {
         setUserProfile(data);
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
+        toast.error("Could not fetch user profile details.");
       } finally {
         setLoading(false);
       }
@@ -40,7 +45,7 @@ const ProfilePage = () => {
 
   const handleDelete = async (deletedItemId) => {
     if (!userInfo) {
-      alert("You must be logged in to delete an item.");
+      toast.error("You must be logged in to delete an item.");
       return;
     }
     if (!window.confirm("Are you sure you want to delete this item?")) return;
@@ -55,49 +60,119 @@ const ProfilePage = () => {
         ...prevProfile,
         items: prevProfile.items.filter((item) => item._id !== deletedItemId),
       }));
-      alert("Item deleted successfully!");
+      toast.success("Item deleted successfully!");
     } catch (error) {
       console.error("Error deleting item:", error);
-      alert(
+      toast.error(
         error.response?.data?.message || "You are not authorized to delete this item."
       );
     }
   };
 
   if (loading) {
-    return <p className="text-center mt-8">Loading profile...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+      </div>
+    );
   }
 
   if (!userProfile) {
     return (
-      <p className="text-center mt-8">Could not load profile. Please log in.</p>
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <p className="text-lg">Could not load profile. Please log in.</p>
+      </div>
     );
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto p-4 pt-8">
-        <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
-          <h1 className="text-3xl font-bold text-gray-800">
-            {userProfile.name}
-          </h1>
-          <p className="text-md text-gray-600">{userProfile.email}</p>
-        </div>
+    <div className="bg-background min-h-screen font-sans transition-colors duration-300 relative z-0 pt-10">
+      <div className="fixed inset-0 -z-10 h-full w-full bg-grid-pattern pointer-events-none"></div>
 
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">
-          Your Listed Items
-        </h2>
-        {userProfile.items.length === 0 ? (
-          <p className="text-center text-gray-500">
-            You have not listed any items yet.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {userProfile.items.map((item) => (
-              <ItemCard key={item._id} item={item} onDelete={handleDelete} userId={userInfo?._id} />
-            ))}
+      <div className="container mx-auto p-4 md:px-8 max-w-7xl">
+        {/* Profile Details Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12"
+        >
+          <Card className="bg-card/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <CardHeader className="pb-4 border-b border-border/40">
+              <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                <User className="w-6 h-6 text-primary" />
+                Profile Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+              <div>
+                <h1 className="text-3xl font-extrabold text-foreground mb-2">
+                  {userProfile.name}
+                </h1>
+                <p className="text-muted-foreground flex items-center gap-2 text-lg">
+                  <Mail className="w-5 h-5" />
+                  {userProfile.email}
+                </p>
+              </div>
+              <div className="flex gap-4">
+                <Button asChild size="lg" className="shadow-lg shadow-primary/20">
+                  <Link to="/upload" className="flex items-center gap-2">
+                    <Package className="w-5 h-5" />
+                    List New Item
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Listed Items Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-foreground flex items-center gap-3">
+              <Package className="w-8 h-8 text-primary" />
+              Your Listed Items
+            </h2>
+            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold border border-primary/20">
+              {userProfile.items.length} {userProfile.items.length === 1 ? 'Item' : 'Items'}
+            </span>
           </div>
-        )}
+
+          {userProfile.items.length === 0 ? (
+            <Card className="bg-card/50 backdrop-blur-md border-dashed border-border p-12 text-center shadow-sm">
+              <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Package className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">No items listed yet</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Start sharing with your community by listing items you no longer need.
+              </p>
+              <Button asChild>
+                <Link to="/upload">List Your First Item</Link>
+              </Button>
+            </Card>
+          ) : (
+            <motion.div 
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            >
+              <AnimatePresence>
+                {userProfile.items.map((item) => (
+                  <ItemCard 
+                    key={item._id} 
+                    item={item} 
+                    onDelete={handleDelete} 
+                    userId={userInfo?._id} 
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
     </div>
   );

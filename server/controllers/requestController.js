@@ -21,6 +21,14 @@ export const updateRequestStatus = async(req, res) => {
         request.status = status;
         await request.save();
 
+        if (status === "Accepted") {
+            const item = await Item.findById(request.item);
+            if (item) {
+                item.status = "given";
+                await item.save();
+            }
+        }
+
         res.json(request);
     } catch (error) {
         res.status(500).json({ message: "Server Error" });

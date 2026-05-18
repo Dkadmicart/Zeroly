@@ -1,126 +1,219 @@
-
-
-// client/src/pages/ContactPage.jsx
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
+    name: "",
+    email: "",
+    message: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We will get back to you soon.');
-    setFormData({ name: '', email: '', message: '' }); 
+    setLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Thank you for your message! The Zeroly team will get back to you soon.", {
+        icon: "✨"
+      });
+      setFormData({ name: "", email: "", message: "" });
+    }, 1200);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
   return (
-    <div className="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen font-sans py-16 flex items-center justify-center">
-      <div className="container mx-auto px-4 md:px-8 max-w-5xl">
-       
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-green-800 leading-tight mb-4 drop-shadow-lg">
-            <span role="img" aria-label="handshake" className="mr-3 text-5xl md:text-6xl">🤝</span>
-            Let’s Connect. Share. Build a sustainable future with Zeroly!!
+    <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center py-20 px-4 md:px-8">
+      {/* Abstract Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]" />
+      </div>
+
+      <div className="container mx-auto max-w-6xl relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <div className="inline-flex items-center justify-center p-3 mb-6 bg-primary/10 rounded-2xl ring-1 ring-primary/20 backdrop-blur-sm">
+            <MessageSquare className="w-8 h-8 text-primary" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-4">
+            Let's Connect. Share. <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400">
+              Build a sustainable future with Zeroly
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 italic font-medium">
-            "Every shared item is a step toward a cleaner, greener world. With Zeroly, let’s turn opportunities into sustainable actions!"
+          <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
+            Every shared item is a step toward a cleaner, greener world. Have questions? Let's turn opportunities into sustainable actions!
           </p>
-        </div>
+        </motion.div>
 
-       
-        <div className="flex flex-col md:flex-row gap-10 justify-center items-stretch">
-          
-          <div className="bg-white rounded-xl shadow-2xl p-10 flex flex-col justify-between w-full md:w-1/2 lg:w-2/5
-                          transform transition-all duration-300 ease-in-out hover:scale-102 hover:shadow-3xl">
-            <div>
-              <h2 className="text-3xl font-bold text-green-700 mb-6 border-b-2 border-green-200 pb-3">Contact Us</h2>
-              <div className="space-y-4">
-                <p className="text-gray-700 text-lg flex items-center">
-                  <span className="mr-3 text-green-500">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </span> 
-                  <strong>Name:</strong> <br/> Sneha <br/>
-                  Samarth khare<br/>
-                
-                </p>
-                <p className="text-gray-700 text-lg flex items-center">
-                  <span className="mr-3 text-green-500">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                    </svg>
-                  </span> 
-                  <strong>Phone:</strong> <br/>8439XXXXX<br/>
-                  9174XXXXXX
-                </p>
-              </div>
-            </div>
-            <p className="text-green-600 font-medium italic mt-8 text-center">
-              "Hope this would have helped you!" 😊
-            </p>
-          </div>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start"
+        >
+          {/* Contact Info Card */}
+          <motion.div variants={itemVariants} className="lg:col-span-2 h-full">
+            <Card className="bg-card/40 backdrop-blur-xl border-border/50 shadow-xl rounded-2xl h-full flex flex-col relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+              <CardContent className="p-8 md:p-10 flex flex-col justify-between h-full relative z-10">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground mb-8">Contact Information</h2>
+                  
+                  <div className="space-y-8">
+                    <div className="flex items-start gap-4 group">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shrink-0">
+                        <Mail className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">Email Support</h4>
+                        <p className="text-base font-medium text-foreground">support@zeroly.com</p>
+                        <p className="text-base font-medium text-foreground">hello@zeroly.com</p>
+                      </div>
+                    </div>
 
-         
-          <div className="bg-white rounded-xl shadow-2xl p-10 w-full md:w-1/2 lg:w-3/5
-                          transform transition-all duration-300 ease-in-out hover:scale-102 hover:shadow-3xl">
-            <h2 className="text-3xl font-bold text-green-700 mb-6 border-b-2 border-green-200 pb-3">Drop Us a Message</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200"
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200"
-                  required
-                />
-              </div>
-              <div>
-                <textarea
-                  name="message"
-                  placeholder="Your Message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows="6"
-                  className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-y transition duration-200"
-                  required
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-green-600 text-white font-bold py-3.5 rounded-lg hover:bg-green-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform hover:scale-100"
-              >
-                Send Message
-              </button>
-            </form>
-          </div>
-        </div>
+                    <div className="flex items-start gap-4 group">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shrink-0">
+                        <Phone className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">Call Us</h4>
+                        <p className="text-base font-medium text-foreground">+1 (800) 123-4567</p>
+                        <p className="text-sm text-muted-foreground mt-1">Mon-Fri from 9am to 6pm</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 group">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shrink-0">
+                        <MapPin className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">Headquarters</h4>
+                        <p className="text-base font-medium text-foreground">
+                          123 Eco-Valley Tech Park,<br />
+                          Sustainability Block, NY 10012
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-border/50">
+                  <p className="text-sm text-muted-foreground italic font-medium">
+                    "Empowering communities through shared resources." 🌍
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Form Card */}
+          <motion.div variants={itemVariants} className="lg:col-span-3">
+            <Card className="bg-card/40 backdrop-blur-xl border-border/50 shadow-xl rounded-2xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-primary/5 rounded-bl-full pointer-events-none" />
+              <CardContent className="p-8 md:p-10 relative z-10">
+                <h2 className="text-2xl font-bold text-foreground mb-2">Send us a Message</h2>
+                <p className="text-muted-foreground mb-8">We'd love to hear from you. Fill out the form and we'll be in touch.</p>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Your Name</Label>
+                      <Input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="h-12 bg-background/50 focus:bg-background"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="john@example.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="h-12 bg-background/50 focus:bg-background"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea
+                      id="message"
+                      name="message"
+                      placeholder="How can we help you make the world a greener place?"
+                      value={formData.message}
+                      onChange={handleChange}
+                      className="min-h-[160px] bg-background/50 focus:bg-background resize-y"
+                      required
+                    />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="w-full md:w-auto h-12 px-8 font-bold group"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      "Sending Message..."
+                    ) : (
+                      <>
+                        Send Message
+                        <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
