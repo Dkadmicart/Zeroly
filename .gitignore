@@ -33,3 +33,6 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Google API/OAuth client secrets
+client_secret_*.json
