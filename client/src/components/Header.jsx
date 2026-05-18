@@ -39,7 +39,7 @@ const Header = () => {
     <header className="bg-background/70 backdrop-blur-xl border-b border-border/50 py-3 px-4 md:px-8 sticky top-0 z-50 font-sans shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/">
-          <img src={logo} alt="Zeroly Logo" className="h-10 dark:invert" />
+          <img src={logo} alt="Zeroly Logo" className="h-10" />
         </Link>
 
         <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">

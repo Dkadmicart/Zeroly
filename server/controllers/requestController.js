@@ -1,6 +1,7 @@
 // server/controllers/requestController.js
 import Request from "../models/Request.js";
 import Item from "../models/Item.js";
+import User from "../models/User.js";
 
 export const updateRequestStatus = async(req, res) => {
     try {
@@ -26,6 +27,13 @@ export const updateRequestStatus = async(req, res) => {
             if (item) {
                 item.status = "given";
                 await item.save();
+
+                // Award points to the donor (owner)
+                const ownerUser = await User.findById(request.owner);
+                if (ownerUser) {
+                    ownerUser.points += 10;
+                    await ownerUser.save();
+                }
             }
         }
 

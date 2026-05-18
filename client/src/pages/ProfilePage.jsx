@@ -8,9 +8,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { User, Mail, Package } from "lucide-react";
+import { User, Mail, Package, Sprout, Leaf, TreePine, Crown, Coins } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const API_BASE_URL = "http://localhost:5001/api"; 
+
+const getTierInfo = (points) => {
+  if (points >= 151) return { name: "Canopy", icon: <Crown className="w-5 h-5 text-yellow-500" />, color: "text-yellow-500", bg: "bg-yellow-500/10", next: null };
+  if (points >= 51) return { name: "Bloom", icon: <TreePine className="w-5 h-5 text-emerald-500" />, color: "text-emerald-500", bg: "bg-emerald-500/10", next: 151 };
+  if (points >= 21) return { name: "Sprout", icon: <Sprout className="w-5 h-5 text-green-500" />, color: "text-green-500", bg: "bg-green-500/10", next: 51 };
+  return { name: "Seed", icon: <Leaf className="w-5 h-5 text-amber-600" />, color: "text-amber-600", bg: "bg-amber-600/10", next: 21 };
+};
 
 const ProfilePage = () => {
   const { userInfo } = useContext(AuthContext);
@@ -85,8 +93,13 @@ const ProfilePage = () => {
     );
   }
 
+  const currentUserTier = getTierInfo(userProfile.points || 0);
+  const progressToNext = currentUserTier.next 
+    ? ((userProfile.points || 0) / currentUserTier.next) * 100 
+    : 100;
+
   return (
-    <div className="bg-background min-h-screen font-sans transition-colors duration-300 relative z-0 pt-10">
+    <div className="bg-background min-h-screen font-sans transition-colors duration-300 relative z-0 pt-10 pb-20">
       <div className="fixed inset-0 -z-10 h-full w-full bg-grid-pattern pointer-events-none"></div>
 
       <div className="container mx-auto p-4 md:px-8 max-w-7xl">
@@ -101,20 +114,48 @@ const ProfilePage = () => {
             <CardHeader className="pb-4 border-b border-border/40">
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
                 <User className="w-6 h-6 text-primary" />
-                Profile Details
+                Profile Dashboard
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-              <div>
-                <h1 className="text-3xl font-extrabold text-foreground mb-2">
-                  {userProfile.name}
-                </h1>
-                <p className="text-muted-foreground flex items-center gap-2 text-lg">
-                  <Mail className="w-5 h-5" />
-                  {userProfile.email}
-                </p>
+            <CardContent className="pt-6 flex flex-col lg:flex-row justify-between items-start gap-8 relative z-10">
+              <div className="flex-1 space-y-4 w-full">
+                <div>
+                  <h1 className="text-3xl font-extrabold text-foreground mb-1">
+                    {userProfile.name}
+                  </h1>
+                  <p className="text-muted-foreground flex items-center gap-2 text-lg">
+                    <Mail className="w-5 h-5" />
+                    {userProfile.email}
+                  </p>
+                </div>
+
+                {/* Embedded Progress Bar */}
+                <div className="bg-background/50 rounded-xl p-4 border border-border/40 mt-4 max-w-xl">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className={`p-3 rounded-xl ${currentUserTier.bg} ${currentUserTier.color}`}>
+                      {currentUserTier.icon}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-foreground flex items-center gap-2">
+                        Tier: <span className={currentUserTier.color}>{currentUserTier.name}</span>
+                      </h4>
+                      <p className="text-sm font-semibold flex items-center gap-1 text-primary">
+                        <Coins className="w-4 h-4" /> {userProfile.points || 0} EcoCoins Earned
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="w-full">
+                    <div className="flex justify-between text-xs font-semibold mb-2">
+                      <span className="text-muted-foreground">Progress to {currentUserTier.next ? "Next Tier" : "Max Tier"}</span>
+                      <span className="text-primary">{currentUserTier.next ? `${userProfile.points || 0} / ${currentUserTier.next}` : "MAX"}</span>
+                    </div>
+                    <Progress value={progressToNext} className="h-2 bg-primary/20" />
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-4">
+              
+              <div className="flex gap-4 lg:self-center shrink-0">
                 <Button asChild size="lg" className="shadow-lg shadow-primary/20">
                   <Link to="/upload" className="flex items-center gap-2">
                     <Package className="w-5 h-5" />

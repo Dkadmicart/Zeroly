@@ -40,7 +40,7 @@ export const createItem = async(req, res) => {
         const user = await User.findById(req.user._id);
         if (user) {
             user.itemCount += 1;
-            user.points += 1;
+            user.points += 5;
             await user.save();
         }
 
@@ -125,7 +125,7 @@ export const deleteItem = async(req, res) => {
         const user = await User.findById(item.user);
         if (user) {
             user.itemCount = Math.max(0, user.itemCount - 1);
-            user.points = Math.max(0, user.points - 1);
+            user.points = Math.max(0, user.points - 5);
             await user.save();
         }
 

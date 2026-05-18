@@ -95,7 +95,7 @@ const RegisterPage = () => {
 
         <div className="relative z-10">
           <Link to="/">
-            <img src={logo} alt="Zeroly Logo" className="h-10 dark:invert" />
+            <img src={logo} alt="Zeroly Logo" className="h-10" />
           </Link>
         </div>
 
@@ -128,7 +128,7 @@ const RegisterPage = () => {
           
           <div className="lg:hidden flex justify-center mb-8">
             <Link to="/">
-              <img src={logo} alt="Zeroly Logo" className="h-12 dark:invert" />
+              <img src={logo} alt="Zeroly Logo" className="h-12" />
             </Link>
           </div>
 

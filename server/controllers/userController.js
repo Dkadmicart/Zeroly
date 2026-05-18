@@ -36,7 +36,7 @@ export const registerUser = async(req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        const user = await User.create({ name, email, password });
+        const user = await User.create({ name, email, password, points: 1 });
 
         if (user) {
             console.log("User created successfully in database.");
@@ -89,6 +89,8 @@ export const getUserProfile = async(req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                points: user.points,
+                itemCount: user.itemCount,
                 items: items,
             });
         } else {
@@ -121,7 +123,8 @@ export const googleLoginUser = async(req, res) => {
             user = await User.create({ 
                 name, 
                 email, 
-                authProvider: 'google' 
+                authProvider: 'google',
+                points: 1
             });
         }
         
