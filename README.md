@@ -2,17 +2,6 @@
 
 *Turn unused goods into community good, lead a zero-waste lifestyle, and gamify sustainability.*
 
-<div align="center">
-
-[![Team](https://img.shields.io/badge/Team-Dumbledore%20Devs-emerald?style=for-the-badge)](https://github.com)
-[![Event](https://img.shields.io/badge/Hackathon-Triwizardthon%20Project-blueviolet?style=for-the-badge)](https://github.com)
-[![Framework](https://img.shields.io/badge/Vite-React%2019-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
-[![Server](https://img.shields.io/badge/Express-Node.js-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
-[![Database](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
-
-</div>
-
----
 
 ## 🌟 About the Project
 
@@ -264,7 +253,7 @@ cd zeroly
 
 ---
 
-## 🧑‍💻 The Dumbledore Devs Team
+## 🧑‍💻 Team
 
 *   🛡️ **Samarth Khare** — Team Leader & Architect
 *   ✨ **Sneha** — Core UI Developer
