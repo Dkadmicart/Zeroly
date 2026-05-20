@@ -8,6 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 import logo from "../assets/Zerolylogo.png";
 import NotificationBtn from "./NotificationBtn";
 import { ModeToggle } from "./ModeToggle";
+import { Coins, Wallet } from "lucide-react";
 
 const Header = () => {
   const { userInfo, logout } = useContext(AuthContext) ?? {};
@@ -80,6 +81,19 @@ const Header = () => {
             </NavLink>
           )}
 
+          {userInfo && (
+            <NavLink
+              to="/wallet"
+              className={({ isActive }) =>
+                `${baseLinkClasses} ${navLinkColors} ${
+                  isActive ? navLinkActive : ""
+                }`
+              }
+            >
+              Wallet
+            </NavLink>
+          )}
+
           
           <Link
             to="/#about-us-section"
@@ -135,10 +149,10 @@ const Header = () => {
               </Link>
 
               <Link
-                to="/profile"
+                to="/wallet"
                 className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all duration-300 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground border border-primary/20 backdrop-blur-md"
               >
-                Hello, {userInfo.name || "User"}!
+                <Coins className="w-4 h-4" /> {userInfo.points || 0}
               </Link>
 
               <button onClick={handleLogout} className={redButtonClasses}>

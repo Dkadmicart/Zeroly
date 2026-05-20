@@ -22,6 +22,7 @@ import ChatPage from "./pages/ChatPage";
 import FAQPage from "./pages/FAQPage"; 
 import ContactPage from "./pages/ContactPage"; 
 import LeaderboardPage from "./pages/LeaderboardPage"; 
+import WalletPage from "./pages/WalletPage";
 
 
 import { AuthProvider } from "./context/AuthContext"; 
@@ -53,6 +54,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/requests" element={<RequestsDashboard />} />
             <Route path="/chat/:chatId" element={<ChatPage />} />
+            <Route path="/wallet" element={<WalletPage />} />
           </Route>
        
           <Route

@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, MessageCircle, HandHeart, Info, Navigation, Share2 } from "lucide-react";
+import { MapPin, MessageCircle, HandHeart, Info, Navigation, Share2, Coins } from "lucide-react";
 
 const API_BASE_URL = "http://localhost:5001/api"; 
 
@@ -144,6 +144,11 @@ const ItemDetailsPage = () => {
                       <Share2 className="w-5 h-5 text-muted-foreground hover:text-primary" />
                     </Button>
                   </div>
+                  
+                  <div className="flex items-center gap-2 mb-4 bg-primary/10 text-primary w-fit px-4 py-2 rounded-xl font-bold border border-primary/20">
+                    <Coins className="w-5 h-5" />
+                    {item.ecoSeeds || 10} EcoSeeds
+                  </div>
               
                   <div className="flex items-center gap-3 mb-6 bg-muted/50 p-3 rounded-2xl border border-border/50 w-fit">
                     <StarRating value={item.averageRating || 0} readOnly />
@@ -172,10 +177,17 @@ const ItemDetailsPage = () => {
                         <Button
                           onClick={handleRequest}
                           size="lg"
-                          className="w-full h-14 text-lg font-bold shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl transition-all"
+                          disabled={userInfo.points < (item.ecoSeeds || 10)}
+                          className={`w-full h-14 text-lg font-bold rounded-2xl transition-all ${
+                            userInfo.points < (item.ecoSeeds || 10) 
+                              ? "bg-muted text-muted-foreground" 
+                              : "shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
+                          }`}
                         >
                           <HandHeart className="w-5 h-5 mr-2" />
-                          Request This Item
+                          {userInfo.points < (item.ecoSeeds || 10) 
+                            ? `Need ${item.ecoSeeds || 10} EcoSeeds (You have ${userInfo.points || 0})` 
+                            : `Request for ${item.ecoSeeds || 10} EcoSeeds`}
                         </Button>
                 
                         <Button

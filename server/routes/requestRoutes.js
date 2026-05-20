@@ -6,6 +6,7 @@ import {
     getSentRequests,
     getReceivedRequests,
     updateRequestStatus,
+    verifyHandshake,
 } from "../controllers/requestController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -17,5 +18,6 @@ router.route("/received").get(protect, getReceivedRequests);
 
 
 router.route("/:id").put(protect, updateRequestStatus);
+router.route("/:id/verify").post(protect, verifyHandshake);
 
 export default router;

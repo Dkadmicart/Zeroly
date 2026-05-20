@@ -22,7 +22,7 @@ export const getItemById = async(req, res) => {
 
 export const createItem = async(req, res) => {
     try {
-        const { name, description, category, imageUrl, address, location } = req.body;
+        const { name, description, category, imageUrl, address, location, ecoSeeds } = req.body;
 
         const item = new Item({
             name,
@@ -30,6 +30,7 @@ export const createItem = async(req, res) => {
             category,
             imageUrl,
             address,
+            ecoSeeds: ecoSeeds || 10,
             location: location ? { type: 'Point', coordinates: location } : undefined,
             user: req.user._id,
         });
@@ -40,7 +41,6 @@ export const createItem = async(req, res) => {
         const user = await User.findById(req.user._id);
         if (user) {
             user.itemCount += 1;
-            user.points += 5;
             await user.save();
         }
 
@@ -125,7 +125,6 @@ export const deleteItem = async(req, res) => {
         const user = await User.findById(item.user);
         if (user) {
             user.itemCount = Math.max(0, user.itemCount - 1);
-            user.points = Math.max(0, user.points - 5);
             await user.save();
         }
 

@@ -110,11 +110,15 @@ const ProfilePage = () => {
           className="mb-12"
         >
           <Card className="bg-card/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-            <CardHeader className="pb-4 border-b border-border/40">
-              <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                <User className="w-6 h-6 text-primary" />
-                Profile Dashboard
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4 pointer-events-none"></div>
+            
+            <CardHeader className="pb-6 border-b border-border/40 relative z-10">
+              <CardTitle className="text-3xl font-extrabold flex items-center gap-3 tracking-tight">
+                <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-inner">
+                  <User className="w-6 h-6" />
+                </div>
+                Your Dashboard
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 flex flex-col lg:flex-row justify-between items-start gap-8 relative z-10">
@@ -130,33 +134,33 @@ const ProfilePage = () => {
                 </div>
 
                 {/* Embedded Progress Bar */}
-                <div className="bg-background/50 rounded-xl p-4 border border-border/40 mt-4 max-w-xl">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className={`p-3 rounded-xl ${currentUserTier.bg} ${currentUserTier.color}`}>
+                <div className="bg-background/60 backdrop-blur-md rounded-2xl p-5 border border-border/40 mt-6 max-w-xl shadow-sm group hover:border-primary/30 transition-colors duration-300">
+                  <div className="flex items-center gap-5 mb-5">
+                    <div className={`p-4 rounded-2xl shadow-inner border border-white/5 ${currentUserTier.bg} ${currentUserTier.color}`}>
                       {currentUserTier.icon}
                     </div>
                     <div>
-                      <h4 className="font-bold text-foreground flex items-center gap-2">
-                        Tier: <span className={currentUserTier.color}>{currentUserTier.name}</span>
+                      <h4 className="font-extrabold text-foreground text-xl flex items-center gap-2 tracking-tight">
+                        <span className={currentUserTier.color}>{currentUserTier.name}</span> Tier
                       </h4>
-                      <p className="text-sm font-semibold flex items-center gap-1 text-primary">
-                        <Coins className="w-4 h-4" /> {userProfile.points || 0} EcoCoins Earned
+                      <p className="text-sm font-semibold flex items-center gap-1.5 text-primary bg-primary/10 w-fit px-2.5 py-0.5 rounded-full mt-1 border border-primary/20">
+                        <Coins className="w-4 h-4" /> {userProfile.points || 0} EcoCoins
                       </p>
                     </div>
                   </div>
                   
-                  <div className="w-full">
-                    <div className="flex justify-between text-xs font-semibold mb-2">
+                  <div className="w-full bg-card/50 p-4 rounded-xl border border-border/30">
+                    <div className="flex justify-between text-xs font-bold mb-3 uppercase tracking-wider">
                       <span className="text-muted-foreground">Progress to {currentUserTier.next ? "Next Tier" : "Max Tier"}</span>
                       <span className="text-primary">{currentUserTier.next ? `${userProfile.points || 0} / ${currentUserTier.next}` : "MAX"}</span>
                     </div>
-                    <Progress value={progressToNext} className="h-2 bg-primary/20" />
+                    <Progress value={progressToNext} className="h-2.5 bg-primary/10" />
                   </div>
                 </div>
               </div>
               
-              <div className="flex gap-4 lg:self-center shrink-0">
-                <Button asChild size="lg" className="shadow-lg shadow-primary/20">
+              <div className="flex gap-4 lg:self-center shrink-0 mt-6 lg:mt-0">
+                <Button asChild size="lg" className="shadow-xl shadow-primary/20 h-14 px-8 text-base font-bold rounded-xl transition-transform hover:scale-105">
                   <Link to="/upload" className="flex items-center gap-2">
                     <Package className="w-5 h-5" />
                     List New Item
@@ -184,18 +188,18 @@ const ProfilePage = () => {
           </div>
 
           {userProfile.items.length === 0 ? (
-            <Card className="bg-card/50 backdrop-blur-md border-dashed border-border p-12 text-center shadow-sm">
-              <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                <Package className="w-8 h-8 text-muted-foreground" />
+            <div className="text-center py-24 bg-card/30 backdrop-blur-sm rounded-3xl border border-border/40 border-dashed shadow-sm">
+              <div className="mx-auto w-20 h-20 bg-muted/60 rounded-full flex items-center justify-center mb-6 shadow-inner border border-border/50">
+                <Package className="w-10 h-10 text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">No items listed yet</h3>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              <h3 className="text-2xl font-extrabold text-foreground mb-3 tracking-tight">No items listed yet</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
                 Start sharing with your community by listing items you no longer need.
               </p>
-              <Button asChild>
+              <Button asChild size="lg" className="rounded-xl px-8 shadow-md">
                 <Link to="/upload">List Your First Item</Link>
               </Button>
-            </Card>
+            </div>
           ) : (
             <motion.div 
               layout

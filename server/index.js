@@ -11,6 +11,7 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import requestRoutes from './routes/requestRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import leaderboardRoutes from './routes/leaderboardRoutes.js';
+import walletRoutes from './routes/walletRoutes.js';
 
 const PORT = process.env.PORT || 5001;
 
@@ -66,6 +67,7 @@ app.use('/api/upload', strictUploadLimiter, uploadRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/wallet', walletRoutes);
 
 
 const server = http.createServer(app);

@@ -41,6 +41,7 @@ const UploadPage = () => {
     description: "",
     category: "Other",
     condition: "Good",
+    ecoSeeds: 10,
   });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -118,6 +119,7 @@ const UploadPage = () => {
         location: [location.lng, location.lat],
         address: location.address || "",
         imageUrl: imageUrl,
+        ecoSeeds: Number(formData.ecoSeeds),
       };
 
       const config = {
@@ -212,6 +214,19 @@ const UploadPage = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         placeholder="e.g., Vintage Wooden Bookshelf"
+                        className="bg-background/50 h-12"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ecoSeeds">EcoSeeds Cost</Label>
+                      <Input
+                        id="ecoSeeds"
+                        name="ecoSeeds"
+                        type="number"
+                        min="0"
+                        value={formData.ecoSeeds}
+                        onChange={handleInputChange}
+                        placeholder="e.g., 10"
                         className="bg-background/50 h-12"
                       />
                     </div>

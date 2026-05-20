@@ -1,7 +1,7 @@
-// server/controllers/requestController.js
 import Request from "../models/Request.js";
 import Item from "../models/Item.js";
 import User from "../models/User.js";
+import Transaction from "../models/Transaction.js";
 
 export const updateRequestStatus = async(req, res) => {
     try {
@@ -25,15 +25,8 @@ export const updateRequestStatus = async(req, res) => {
         if (status === "Accepted") {
             const item = await Item.findById(request.item);
             if (item) {
-                item.status = "given";
+                item.status = "requested";
                 await item.save();
-
-                // Award points to the donor (owner)
-                const ownerUser = await User.findById(request.owner);
-                if (ownerUser) {
-                    ownerUser.points += 10;
-                    await ownerUser.save();
-                }
             }
         }
 
@@ -83,6 +76,12 @@ export const createRequest = async(req, res) => {
                 .json({ message: "You cannot request your own item" });
         }
 
+        const requesterUser = await User.findById(requesterId);
+        const itemCost = item.ecoSeeds || 10;
+        
+        if (requesterUser.points < itemCost) {
+            return res.status(400).json({ message: `Insufficient EcoSeeds. You need ${itemCost} EcoSeeds to request this item.` });
+        }
 
         const existingRequest = await Request.findOne({
             item: itemId,
@@ -104,5 +103,70 @@ export const createRequest = async(req, res) => {
         res.status(201).json(createdRequest);
     } catch (error) {
         res.status(500).json({ message: "Server Error", error: error.message });
+    }
+};
+
+export const verifyHandshake = async(req, res) => {
+    try {
+        const request = await Request.findById(req.params.id);
+
+        if (!request) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        if (request.owner.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: "Not authorized to verify this request" });
+        }
+
+        if (request.status !== "Accepted") {
+            return res.status(400).json({ message: "Only accepted requests can be verified" });
+        }
+
+        request.status = "Completed";
+        await request.save();
+
+        const item = await Item.findById(request.item);
+        if (item) {
+            item.status = "given";
+            await item.save();
+
+            const itemCost = item.ecoSeeds || 10;
+            
+            // Deduct points from requester
+            const requesterUser = await User.findById(request.requester);
+            if (requesterUser) {
+                requesterUser.points = Math.max(0, requesterUser.points - itemCost);
+                await requesterUser.save();
+            }
+
+            // Award points to the donor (owner)
+            const ownerUser = await User.findById(request.owner);
+            if (ownerUser) {
+                ownerUser.points += itemCost;
+                await ownerUser.save();
+            }
+
+            // Log transactions
+            await Transaction.create({
+                user: request.requester,
+                type: 'spent',
+                amount: itemCost,
+                description: `Requested item: ${item.name}`,
+                relatedItem: item._id,
+            });
+
+            await Transaction.create({
+                user: request.owner,
+                type: 'earned',
+                amount: itemCost,
+                description: `Gave away item: ${item.name}`,
+                relatedItem: item._id,
+            });
+        }
+
+        res.json({ message: "Handshake successful, points awarded!", request });
+    } catch (error) {
+        console.error("Error verifying handshake:", error);
+        res.status(500).json({ message: "Server Error" });
     }
 };
