@@ -161,7 +161,7 @@ const Header = () => {
             </>
           ) : (
             <div className="flex items-center space-x-3 md:space-x-4">
-              <Link to="/login" className="px-6 py-2 rounded-full font-bold shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white transition-all transform hover:scale-105">
+              <Link to="/login" className="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-primary/40 focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:scale-105">
                 Sign In / Join
               </Link>
             </div>
@@ -171,9 +171,9 @@ const Header = () => {
         
         <div className="md:hidden flex items-center gap-2">
           <ModeToggle />
-          <button className="text-foreground hover:text-emerald-600 focus:outline-none p-2">
+          <button className="text-foreground hover:text-primary focus:outline-none p-2 ml-2 transition-colors">
             <svg
-              className="w-8 h-8"
+              className="w-7 h-7"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
