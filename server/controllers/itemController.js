@@ -2,7 +2,9 @@
 
 import Item from "../models/Item.js";
 import User from "../models/User.js";
+import Wishlist from "../models/Wishlist.js";
 import logger from "../utils/logger.js";
+import { sendWishlistMatchEmail } from "../services/emailService.js";
 
 
 export const getItemById = async(req, res) => {
@@ -46,6 +48,30 @@ export const createItem = async(req, res) => {
         }
 
         res.status(201).json(createdItem);
+
+        // Background task: Check wishlists for matches
+        process.nextTick(async () => {
+            try {
+                // Find all active wishlists except the creator's
+                const activeWishlists = await Wishlist.find({ 
+                    isActive: true, 
+                    user: { $ne: req.user._id } 
+                }).populate('user', 'email name');
+
+                const textToMatch = `${createdItem.name} ${createdItem.description} ${createdItem.category}`.toLowerCase();
+
+                activeWishlists.forEach(wishlist => {
+                    const hasMatch = wishlist.keywords.some(kw => textToMatch.includes(kw));
+                    if (hasMatch && wishlist.user && wishlist.user.email) {
+                        const itemUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/item/${createdItem._id}`;
+                        sendWishlistMatchEmail(wishlist.user.email, wishlist.user.name, createdItem.name, itemUrl);
+                    }
+                });
+            } catch (err) {
+                logger.error({ err }, 'Failed to process wishlist matches for item %s', createdItem._id);
+            }
+        });
+
     } catch (error) {
         logger.error({ err: error }, 'Failed to create item');
         res.status(500).json({ message: "Error creating item", error: error.message });

@@ -142,6 +142,13 @@ const Header = () => {
             <>
               <NotificationBtn />
               <Link
+                to="/profile"
+                className={glassyNavButton}
+              >
+                Profile
+              </Link>
+
+              <Link
                 to="/requests"
                 className={glassyNavButton}
               >
