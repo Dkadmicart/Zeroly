@@ -1,16 +1,17 @@
 // server/config/cloudinary.js
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+import logger from "../utils/logger.js";
 
 
 dotenv.config();
 
 
-console.log("--- Checking Cloudinary Environment Variables ---");
-console.log("Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
-console.log("API Key:", process.env.CLOUDINARY_API_KEY);
-console.log("API Secret Loaded:", !!process.env.CLOUDINARY_API_SECRET);
-console.log("-------------------------------------------");
+// Value-free confirmation only in non-production environments.
+// Never log credential values (cloud name, API key, secret status).
+if (process.env.NODE_ENV !== 'production') {
+    logger.debug('Cloudinary configured');
+}
 
 
 cloudinary.config({

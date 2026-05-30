@@ -1,9 +1,9 @@
 // server/middleware/authMiddleware.js
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import logger from "../utils/logger.js";
 
 const protect = async (req, res, next) => {
-  console.log('--- "protect" middleware initiated ---');
   let token;
 
   if (
@@ -17,10 +17,10 @@ const protect = async (req, res, next) => {
 
       req.user = await User.findById(decoded.id).select("-password");
 
-      console.log("✔ Token verified, user:", req.user?.name);
+      logger.debug('Token verified for user: %s', req.user?.name);
       return next();
     } catch (error) {
-      console.error("--- TOKEN VERIFICATION FAILED ---", error);
+      logger.warn({ err: error }, 'Token verification failed');
 
       if (error.name === "TokenExpiredError") {
         return res.status(401).json({ message: "Token expired" });

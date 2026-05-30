@@ -2,6 +2,7 @@
 import express from "express";
 import cloudinary from "../config/cloudinary.js";
 import { protect } from "../middleware/authMiddleware.js";
+import logger from "../utils/logger.js";
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.get("/signature", protect, (req, res) => {
             cloudName: cloudinary.config().cloud_name
         });
     } catch (error) {
-        console.error("Signature generation error:", error);
+        logger.error({ err: error }, 'Signature generation failed');
         res.status(500).json({ message: "Failed to generate upload signature" });
     }
 });

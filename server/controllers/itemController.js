@@ -2,6 +2,7 @@
 
 import Item from "../models/Item.js";
 import User from "../models/User.js";
+import logger from "../utils/logger.js";
 
 
 export const getItemById = async(req, res) => {
@@ -14,7 +15,7 @@ export const getItemById = async(req, res) => {
             res.status(404).json({ message: "Item not found" });
         }
     } catch (error) {
-        console.error("Error fetching item by ID:", error);
+        logger.error({ err: error }, 'Failed to fetch item by ID');
         res.status(500).json({ message: "Server Error" });
     }
 };
@@ -46,7 +47,7 @@ export const createItem = async(req, res) => {
 
         res.status(201).json(createdItem);
     } catch (error) {
-        console.error("Error creating item:", error);
+        logger.error({ err: error }, 'Failed to create item');
         res.status(500).json({ message: "Error creating item", error: error.message });
     }
 };
@@ -96,7 +97,7 @@ export const getItems = async(req, res) => {
             total
         });
     } catch (error) {
-        console.error("Error fetching items:", error);
+        logger.error({ err: error }, 'Failed to fetch items');
         res
             .status(500)
             .json({ message: "Error fetching items", error: error.message });
@@ -114,8 +115,7 @@ export const deleteItem = async(req, res) => {
         }
 
 
-        console.log("Item Owner ID:", item.user.toString());
-        console.log("Logged User ID:", req.user._id.toString());
+        logger.debug('Delete authorization check — item owner: %s, requester: %s', item.user.toString(), req.user._id.toString());
 
         if (item.user.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: "Not authorized to delete this item" });
@@ -131,7 +131,7 @@ export const deleteItem = async(req, res) => {
         await item.deleteOne();
         res.json({ message: "Item removed successfully" });
     } catch (error) {
-        console.error("Error deleting item:", error);
+        logger.error({ err: error }, 'Failed to delete item');
         res.status(500).json({ message: "Error deleting item", error: error.message });
     }
 };
@@ -152,7 +152,7 @@ export const getItemReviews = async(req, res) => {
             averageRating: item.averageRating,
         });
     } catch (error) {
-        console.error("Error fetching reviews:", error);
+        logger.error({ err: error }, 'Failed to fetch reviews');
         res.status(500).json({ message: "Failed to fetch reviews" });
     }
 };
@@ -195,7 +195,7 @@ export const addItemReview = async(req, res) => {
             numReviews: item.numReviews
         });
     } catch (error) {
-        console.error("Error adding review:", error);
+        logger.error({ err: error }, 'Failed to add review');
         res.status(500).json({ message: "Failed to add review", error: error.message });
     }
 };
@@ -237,7 +237,7 @@ export const deleteItemReview = async(req, res) => {
         });
 
     } catch (error) {
-        console.error(`Error deleting review for item ${req.params.itemId} and review ${req.params.reviewId}:`, error);
+        logger.error({ err: error }, 'Failed to delete review for item %s', req.params.itemId);
         res.status(500).json({ message: 'Server error while deleting review.', error: error.message });
     }
 };
