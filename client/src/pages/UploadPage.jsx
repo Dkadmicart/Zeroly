@@ -47,6 +47,7 @@ const UploadPage = () => {
   const [preview, setPreview] = useState(null);
   const [location, setLocation] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -77,6 +78,43 @@ const UploadPage = () => {
   };
 
   const prevStep = () => setStep((prev) => prev - 1);
+
+  const handleAutoFill = async () => {
+    if (!image) {
+      toast.error("Please upload an image first.");
+      return;
+    }
+    setAnalyzing(true);
+    try {
+      const getBase64 = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+      
+      const base64data = await getBase64(image);
+      const { data } = await api.post(`${API_BASE_URL}/ai/analyze`, { imageBase64: base64data }, {
+        headers: { Authorization: `Bearer ${userInfo.token}` }
+      });
+      
+      if (data.success && data.suggestion) {
+        setFormData({
+          ...formData,
+          name: data.suggestion.name || formData.name,
+          description: data.suggestion.description || formData.description,
+          category: data.suggestion.category || formData.category,
+          ecoSeeds: data.suggestion.ecoSeeds || formData.ecoSeeds,
+        });
+        toast.success("AI auto-fill successful! Please review.");
+        setStep(1);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "AI analysis failed. Please enter details manually.");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!location) {
@@ -320,6 +358,26 @@ const UploadPage = () => {
                         onChange={handleImageChange}
                       />
                     </div>
+                    {image && (
+                      <div className="flex justify-center mt-4">
+                        <Button 
+                          onClick={handleAutoFill} 
+                          disabled={analyzing} 
+                          variant="outline" 
+                          className="w-full sm:w-auto border-primary text-primary hover:bg-primary/10 shadow-sm transition-all"
+                        >
+                          {analyzing ? (
+                            <span className="flex items-center">
+                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              ✨ Analyzing Image...
+                            </span>
+                          ) : "✨ Auto-fill Details with AI"}
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                   <CardFooter className="flex justify-between pt-4">
                     <Button variant="ghost" onClick={prevStep} size="lg">

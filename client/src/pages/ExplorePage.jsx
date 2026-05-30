@@ -138,8 +138,9 @@ const ExplorePage = () => {
     else setLoading(true);
     
     try {
-      let query = `?keyword=${keyword}&page=${pageNum}`;
-      if (category !== "All") query += `&category=${category}`;
+      let query = `?page=${pageNum}`;
+      if (keyword) query += `&q=${encodeURIComponent(keyword)}`;
+      if (category !== "All") query += `&category=${encodeURIComponent(category)}`;
       
       const realRad = radius === "all" || !radius ? "" : radius;
       const realLat = lat || (userLocation ? userLocation.lat : null);
@@ -149,7 +150,12 @@ const ExplorePage = () => {
         query += `&radius=${realRad}&lat=${realLat}&lng=${realLng}`;
       }
       
-      const { data } = await api.get(`${API_BASE_URL}/items${query}`);
+      
+      const endpoint = keyword && keyword.trim().includes(' ') 
+        ? `${API_BASE_URL}/search/semantic${query}`
+        : `${API_BASE_URL}/items${query.replace('q=', 'keyword=')}`;
+
+      const { data } = await api.get(endpoint);
       
       if (append) {
         setItems(prev => [...prev, ...data.items]);
@@ -282,7 +288,7 @@ const ExplorePage = () => {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onFocus={() => setShowDropdown(true)}
-                placeholder="Search for treasures (e.g. calculator, books...)"
+                placeholder="✨ Try semantic search (e.g. 'warm winter jacket')"
                 className="w-full h-11 pr-10 focus-visible:ring-primary text-base"
               />
               {keyword && (

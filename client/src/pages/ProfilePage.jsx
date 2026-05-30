@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import ItemCard from "../components/ItemCard";
+import WishlistManager from "../components/WishlistManager";
 import api from "../api.js";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -169,6 +170,9 @@ const ProfilePage = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Add Wishlist Manager Here */}
+          <WishlistManager />
         </motion.div>
 
         {/* Listed Items Section */}
