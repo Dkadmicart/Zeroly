@@ -31,13 +31,13 @@ function App() {
   console.log("API Base URL:", import.meta.env.VITE_API_URL);
   return (
     
-    <div className="font-sans flex flex-col min-h-screen bg-background text-foreground selection:bg-primary/30">
+    <div className="font-sans flex flex-col min-h-screen bg-background text-foreground">
       <Header />
 
      
       <ScrollToTop />
 
-      <main className="flex-grow pt-16">
+      <main className="flex-grow">
         <Routes>
         
           <Route path="/" element={<HomePage />} />
