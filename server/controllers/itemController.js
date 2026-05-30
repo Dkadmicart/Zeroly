@@ -186,6 +186,7 @@ export const addItemReview = async(req, res) => {
             comment,
         };
 
+        item.reviews.push(review);
         item.calcRating();
         await item.save();
         res.status(201).json({

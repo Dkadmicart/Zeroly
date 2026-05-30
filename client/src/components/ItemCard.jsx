@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import StarRating from "./StarRating";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Trash2, MapPin } from "lucide-react";
+import { Trash2, MapPin, Coins } from "lucide-react";
 
 const ItemCard = ({ item, userId, onDelete }) => {
   const isOwner = userId === item.user;
@@ -23,6 +21,17 @@ const ItemCard = ({ item, userId, onDelete }) => {
           {item.category}
         </span>
 
+        {/* Floating Status Badge (if not available) */}
+        {item.status && item.status !== "available" && (
+          <span className={`absolute ${isOwner ? "top-3 left-14" : "top-3 left-3"} z-10 text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm select-none backdrop-blur-md border ${
+            item.status === "requested" 
+              ? "bg-amber-500/80 text-white border-amber-400/30" 
+              : "bg-blue-500/80 text-white border-blue-400/30"
+          }`}>
+            {item.status}
+          </span>
+        )}
+
         {/* Floating Delete Button (For Owner) */}
         {isOwner && (
           <button
@@ -39,7 +48,7 @@ const ItemCard = ({ item, userId, onDelete }) => {
         )}
 
         {/* Image Section */}
-        <Link to={`/item/${item._id}`} className="overflow-hidden block aspect-video sm:aspect-square md:aspect-video relative group-hover:after:opacity-100 after:absolute after:inset-0 after:bg-gradient-to-t after:from-background/25 after:to-transparent after:opacity-0 after:transition-opacity after:duration-300">
+        <Link to={`/item/${item._id}`} className="overflow-hidden block aspect-[4/3] relative group-hover:after:opacity-100 after:absolute after:inset-0 after:bg-gradient-to-t after:from-background/25 after:to-transparent after:opacity-0 after:transition-opacity after:duration-300">
           <img
             src={item.imageUrl || "/placeholder-item.png"}
             alt={item.name}
@@ -49,37 +58,51 @@ const ItemCard = ({ item, userId, onDelete }) => {
         </Link>
 
         {/* Content Section */}
-        <CardHeader className="p-5 pb-0 flex-grow text-left">
+        <CardHeader className="p-5 pb-4 flex-grow text-left">
           <div className="flex flex-col h-full justify-between">
             <div>
               {/* Star rating */}
               <div className="flex items-center gap-1.5 mb-2.5">
-                <StarRating value={item.averageRating || 0} readOnly size={14} />
-                <span className="text-xs text-muted-foreground font-semibold">
-                  ({item.numReviews || 0})
+                <span className="text-amber-500 text-sm font-bold">★</span>
+                <span className="text-xs font-bold text-foreground">
+                  {item.averageRating && item.averageRating > 0 ? item.averageRating.toFixed(1) : "New"}
                 </span>
+                {item.numReviews > 0 && (
+                  <span className="text-xs text-muted-foreground font-semibold">
+                    ({item.numReviews})
+                  </span>
+                )}
               </div>
 
               {/* Item Title */}
-              <h3 className="text-lg md:text-xl font-extrabold text-foreground tracking-tight line-clamp-1 group-hover:text-primary transition-colors duration-200">
+              <h3 className="text-lg font-extrabold text-foreground tracking-tight line-clamp-1 group-hover:text-primary transition-colors duration-200">
                 <Link to={`/item/${item._id}`} className="block w-full">
                   {item.name}
                 </Link>
               </h3>
 
               {/* Item Description */}
-              <p className="text-muted-foreground text-sm leading-relaxed mt-2 line-clamp-2 h-10">
+              <p className="text-muted-foreground text-xs leading-relaxed mt-2 line-clamp-2 h-8">
                 {item.description}
               </p>
+            </div>
+
+            {/* EcoSeeds Price Section */}
+            <div className="flex items-center justify-between mt-4 pt-3.5 border-t border-border/20">
+              <span className="text-xs text-muted-foreground font-semibold">Required Seeds</span>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs shadow-sm">
+                <Coins className="w-3.5 h-3.5 text-emerald-500" />
+                <span>{item.ecoSeeds || 10} EcoSeeds</span>
+              </div>
             </div>
           </div>
         </CardHeader>
 
         {/* Footer Address Panel */}
-        <CardContent className="p-5 pt-4 mt-auto border-t border-border/30">
+        <CardContent className="p-5 pt-4 mt-auto border-t border-border/30 bg-secondary/10">
           <div className="flex items-center gap-2 text-muted-foreground/85 hover:text-foreground transition-colors duration-200">
-            <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-xs font-semibold truncate select-none">
+            <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+            <span className="text-xs font-medium truncate select-none">
               {item.address || "Local Sharing"}
             </span>
           </div>
