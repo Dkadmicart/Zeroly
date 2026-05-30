@@ -85,7 +85,51 @@ Users display their commitment to sustainability through 4 distinct ranks displa
 - **Real-Time Communication**: `socket.io` for bi-directional chat syncing
 - **Security & Authorization**: `jsonwebtoken` & `bcryptjs`
 - **Media Pipeline**: `multer` with `multer-storage-cloudinary` for cloud-hosted files
-- **Security Protections**: `express-rate-limit` for DDoS prevention and API protection
+- **Security Protections**: `express-rate-limit` for DDoS prevention and API protection, `helmet` for HTTP security headers
+- **Structured Logging**: `pino` with automatic credential redaction
+
+---
+
+## 🔒 Security & Logging
+
+### Logging Policy
+- **No secrets or PII in logs**: API keys, JWT secrets, OAuth tokens, password hashes, and raw request bodies are never logged.
+- **Structured logging**: All server logging uses [`pino`](https://github.com/pinojs/pino), producing structured JSON in production and human-readable pretty-print in development.
+- **Automatic redaction**: Even if sensitive fields (`password`, `token`, `authorization`, `apiKey`, `secret`) are accidentally passed to the logger, they are automatically censored to `[REDACTED]`.
+
+### Environment Configuration
+Set `NODE_ENV` to control logging behavior:
+
+| `NODE_ENV` | Log Level | Output Format | Debug Logs |
+|:-----------|:----------|:--------------|:-----------|
+| `production` | `info` | Structured JSON | Suppressed |
+| `development` (default) | `debug` | Pretty-printed + colorized | Enabled |
+
+On **Railway** (or your hosting platform), set `NODE_ENV=production` as an environment variable to enable production-safe logging.
+
+### Security Headers
+The API server uses [`helmet`](https://helmetjs.github.io/) to set baseline HTTP security headers:
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: SAMEORIGIN`
+- `Strict-Transport-Security` (HSTS)
+- `X-XSS-Protection` and more
+
+> **Note**: Content Security Policy (CSP) is disabled on the API server because it only serves JSON. CSP should be configured on the frontend host (Netlify).
+
+### Local Debugging
+To enable verbose debug output locally:
+```bash
+cd server
+npm run dev
+# NODE_ENV defaults to 'development', so you get colorized debug-level output
+```
+
+### Guardrails
+Run the secret-logging lint check before committing:
+```bash
+npm run lint:secrets
+```
+This scans all server JS files for patterns that indicate credential/PII leakage in logs and exits with an error if violations are found.
 
 ---
 

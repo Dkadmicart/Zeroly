@@ -2,6 +2,7 @@ import Request from "../models/Request.js";
 import Item from "../models/Item.js";
 import User from "../models/User.js";
 import Transaction from "../models/Transaction.js";
+import logger from "../utils/logger.js";
 
 export const updateRequestStatus = async(req, res) => {
     try {
@@ -166,7 +167,7 @@ export const verifyHandshake = async(req, res) => {
 
         res.json({ message: "Handshake successful, points awarded!", request });
     } catch (error) {
-        console.error("Error verifying handshake:", error);
+        logger.error({ err: error }, 'Handshake verification failed');
         res.status(500).json({ message: "Server Error" });
     }
 };

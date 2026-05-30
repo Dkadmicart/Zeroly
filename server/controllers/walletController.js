@@ -2,6 +2,7 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import Transaction from "../models/Transaction.js";
 import User from "../models/User.js";
+import logger from "../utils/logger.js";
 
 // Ensure you have these in your .env file
 // RAZORPAY_KEY_ID=
@@ -15,7 +16,7 @@ export const getTransactions = async (req, res) => {
             
         res.json(transactions);
     } catch (error) {
-        console.error("Error fetching transactions:", error);
+        logger.error({ err: error }, 'Failed to fetch transactions');
         res.status(500).json({ message: "Server Error" });
     }
 };
@@ -50,7 +51,7 @@ export const createRazorpayOrder = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Error creating Razorpay order:", error);
+        logger.error({ err: error }, 'Failed to create Razorpay order');
         res.status(500).json({ message: "Server Error" });
     }
 };
@@ -89,7 +90,7 @@ export const verifyPayment = async (req, res) => {
             res.status(400).json({ message: "Invalid Signature" });
         }
     } catch (error) {
-        console.error("Error verifying payment:", error);
+        logger.error({ err: error }, 'Failed to verify payment');
         res.status(500).json({ message: "Server Error" });
     }
 };

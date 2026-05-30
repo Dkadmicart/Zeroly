@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Item from "../models/Item.js";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
+import logger from "../utils/logger.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -16,8 +17,8 @@ const generateToken = (id) => {
 
 export const registerUser = async(req, res) => {
 
-    console.log('--- "Register User" endpoint hit ---');
-    console.log("Request Body:", req.body);
+    logger.debug('Register user endpoint hit');
+    // SECURITY: Never log req.body on auth routes — it contains passwords and PII.
 
 
     try {
@@ -25,21 +26,21 @@ export const registerUser = async(req, res) => {
 
 
         if (!name || !email || !password) {
-            console.log("Validation failed: Missing name, email, or password.");
+            logger.debug('Registration validation failed: missing required fields');
             return res.status(400).json({ message: "Please enter all fields" });
         }
 
         const userExists = await User.findOne({ email });
 
         if (userExists) {
-            console.log("User already exists in database.");
+            logger.debug('Registration rejected: user already exists');
             return res.status(400).json({ message: "User already exists" });
         }
 
         const user = await User.create({ name, email, password, points: 1 });
 
         if (user) {
-            console.log("User created successfully in database.");
+            logger.info('User registered successfully');
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
@@ -48,13 +49,12 @@ export const registerUser = async(req, res) => {
             });
         } else {
 
-            console.log("User creation failed for an unknown reason.");
+            logger.warn('User creation failed for an unknown reason');
             res.status(400).json({ message: "Invalid user data" });
         }
     } catch (error) {
 
-        console.error("---!! SERVER ERROR DURING REGISTRATION !!---");
-        console.error(error);
+        logger.error({ err: error }, 'Registration failed');
         res.status(500).json({ message: "Server Error" });
     }
 };
@@ -136,7 +136,7 @@ export const googleLoginUser = async(req, res) => {
         });
         
     } catch (error) {
-        console.error("Google authentication error:", error);
+        logger.error({ err: error }, 'Google authentication failed');
         res.status(401).json({ message: "Invalid Google token" });
     }
 };

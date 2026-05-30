@@ -1,9 +1,11 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import http from 'http';
 import { Server } from 'socket.io';
 import connectDB from './config/db.js';
+import logger from './utils/logger.js';
 
 import itemRoutes from './routes/items.js';
 import userRoutes from './routes/users.js';
@@ -27,7 +29,7 @@ const corsOptions = {
         if (!origin || allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
-        console.log(`Blocked by CORS: ${origin}`);
+        logger.warn(`Blocked by CORS: ${origin}`);
         return callback(new Error(`Not allowed by CORS: ${origin}`));
     },
     credentials: true,
@@ -36,6 +38,14 @@ const corsOptions = {
 
 await connectDB();
 const app = express();
+
+// Baseline security headers.
+// CSP is disabled because the React SPA is served from a separate origin (Netlify)
+// and this server only serves JSON. A full CSP policy belongs on the frontend host.
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
@@ -64,9 +74,9 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+    logger.debug('User connected: %s', socket.id);
     socket.on('send-message', (data) => io.emit('new-message', data));
-    socket.on('disconnect', () => console.log('User disconnected:', socket.id));
+    socket.on('disconnect', () => logger.debug('User disconnected: %s', socket.id));
 });
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
