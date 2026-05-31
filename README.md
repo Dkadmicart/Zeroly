@@ -251,6 +251,11 @@ cd zeroly
 ### 🏆 Leaderboard (`/api/leaderboard`)
 - `GET /`: Retrieves global ranking order of users sorted by cumulative EcoCoins points.
 
+## Documentation
+- [docs/API.md](docs/API.md)
+- [docs/SOCKET_EVENTS.md](docs/SOCKET_EVENTS.md)
+- [docs/ENV_VARIABLES.md](docs/ENV_VARIABLES.md)
+
 ---
 
 ## 🧑‍💻 Team
