@@ -227,6 +227,14 @@ cd zeroly
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome. Please read the contributing guide before opening issues or pull requests:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
 ## 📡 API Endpoints Reference
 
 ### 🔐 Authentication Routes (`/api/users`)
