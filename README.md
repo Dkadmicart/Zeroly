@@ -271,6 +271,14 @@ cd zeroly
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome. Please read the contributing guide before opening issues or pull requests:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
 ## 📡 API Endpoints Reference
 
 ### 🔐 Authentication Routes (`/api/users`)
@@ -294,6 +302,11 @@ cd zeroly
 
 ### 🏆 Leaderboard (`/api/leaderboard`)
 - `GET /`: Retrieves global ranking order of users sorted by cumulative EcoCoins points.
+
+## Documentation
+- [docs/API.md](docs/API.md)
+- [docs/SOCKET_EVENTS.md](docs/SOCKET_EVENTS.md)
+- [docs/ENV_VARIABLES.md](docs/ENV_VARIABLES.md)
 
 ---
 
