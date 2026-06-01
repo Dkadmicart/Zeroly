@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
+import api from "../api.js";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { motion } from "framer-motion";
@@ -19,8 +19,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import logo from "../assets/Zerolylogo.png";
-
-const API_BASE_URL = "http://localhost:5001/api"; 
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -52,12 +50,17 @@ const LoginPage = () => {
     }
     
     setForgotPasswordLoading(true);
-    setTimeout(() => {
-      setForgotPasswordLoading(false);
+    try {
+      await api.post("/api/users/forgot-password", { email: forgotPasswordEmail });
       toast.success("Password reset link sent to your email!");
       setIsForgotModalOpen(false);
       setForgotPasswordEmail("");
-    }, 1500);
+    } catch (error) {
+      console.error("Forgot password failed:", error);
+      toast.error(error.response?.data?.message || "Failed to send reset link.");
+    } finally {
+      setForgotPasswordLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -69,7 +72,7 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const { data } = await axios.post(`${API_BASE_URL}/users/login`, { 
+      const { data } = await api.post("/api/users/login", { 
         email,
         password,
       });
@@ -283,7 +286,7 @@ const LoginPage = () => {
                 onSuccess={async (credentialResponse) => {
                   try {
                     setLoading(true);
-                    const { data } = await axios.post(`${API_BASE_URL}/users/google-login`, {
+                    const { data } = await api.post("/api/users/google-login", {
                       token: credentialResponse.credential,
                     });
             

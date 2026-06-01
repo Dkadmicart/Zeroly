@@ -55,3 +55,49 @@ export const sendWishlistMatchEmail = async (userEmail, userName, itemName, item
         logger.error({ err: error }, 'Failed to send wishlist email to %s', userEmail);
     }
 };
+
+/**
+ * Sends a password reset email
+ */
+export const sendPasswordResetEmail = async (userEmail, resetUrl) => {
+    try {
+        if (!resend) {
+            logger.warn('Resend API key missing. Skipping password reset email to %s', userEmail);
+            return;
+        }
+
+        logger.info('Sending password reset email to %s', userEmail);
+
+        const { data, error } = await resend.emails.send({
+            from: 'Zeroly Security <onboarding@resend.dev>',
+            to: userEmail,
+            subject: 'Reset your Zeroly Password',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                    <h2 style="color: #10b981;">Password Reset Request</h2>
+                    <p style="color: #475569; font-size: 16px;">
+                        We received a request to reset your password. Click the button below to choose a new password:
+                    </p>
+                    <a href="${resetUrl}" style="display: inline-block; background-color: #10b981; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; margin-top: 10px;">
+                        Reset Password
+                    </a>
+                    <p style="color: #475569; font-size: 14px; margin-top: 20px;">
+                        If you didn't request this, you can safely ignore this email.
+                    </p>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+                    <p style="color: #94a3b8; font-size: 12px; text-align: center;">
+                        Zeroly Community • Reducing Waste Together
+                    </p>
+                </div>
+            `
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        logger.debug('Password reset email sent successfully: %s', data?.id);
+    } catch (error) {
+        logger.error({ err: error }, 'Failed to send password reset email to %s', userEmail);
+    }
+};
