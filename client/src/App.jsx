@@ -19,6 +19,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
 import RequestsDashboard from "./pages/RequestsDashboard";
 import ChatPage from "./pages/ChatPage";
+import MessagesPage from "./pages/MessagesPage";
 import FAQPage from "./pages/FAQPage"; 
 import ContactPage from "./pages/ContactPage"; 
 import LeaderboardPage from "./pages/LeaderboardPage"; 
@@ -53,6 +54,7 @@ function App() {
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/requests" element={<RequestsDashboard />} />
+            <Route path="/messages" element={<MessagesPage />} />
             <Route path="/chat/:chatId" element={<ChatPage />} />
             <Route path="/wallet" element={<WalletPage />} />
           </Route>

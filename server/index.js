@@ -6,6 +6,8 @@ import http from 'http';
 import { Server } from 'socket.io';
 import connectDB from './config/db.js';
 import logger from './utils/logger.js';
+import jwt from 'jsonwebtoken';
+import Chat from './models/Chat.js';
 
 import itemRoutes from './routes/items.js';
 import userRoutes from './routes/users.js';
@@ -80,9 +82,46 @@ const io = new Server(server, {
     },
 });
 
+io.use((socket, next) => {
+    try {
+        const token = socket.handshake.auth?.token;
+        if (!token) return next(new Error('Authentication error: No token provided'));
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        socket.userId = decoded.id;
+        next();
+    } catch (err) {
+        next(new Error('Authentication error: Invalid token'));
+    }
+});
+
 io.on('connection', (socket) => {
     logger.debug('User connected: %s', socket.id);
-    socket.on('send-message', (data) => io.emit('new-message', data));
+
+    socket.on('joinRoom', async (roomId) => {
+        if (!roomId) return;
+        try {
+            const chat = await Chat.findById(roomId);
+            if (!chat) return;
+
+            const isParticipant = chat.participants.some(p => p.toString() === socket.userId);
+            if (isParticipant) {
+                socket.join(roomId);
+                logger.debug(`Socket ${socket.id} joined room ${roomId}`);
+            } else {
+                logger.warn(`Unauthorized room join attempt by user ${socket.userId} for room ${roomId}`);
+            }
+        } catch (err) {
+            logger.error({ err }, 'Error joining room');
+        }
+    });
+
+    socket.on('send-message', (data) => {
+        const roomId = data.roomId || data.chatId;
+        if (!roomId) return;
+        io.to(roomId).emit('new-message', data);
+    });
+
     socket.on('disconnect', () => logger.debug('User disconnected: %s', socket.id));
 });
 

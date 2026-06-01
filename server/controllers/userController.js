@@ -140,3 +140,33 @@ export const googleLoginUser = async(req, res) => {
         res.status(401).json({ message: "Invalid Google token" });
     }
 };
+
+export const forgotPassword = async(req, res) => {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ message: "Please provide an email" });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            // We still return 200 to prevent email enumeration attacks
+            return res.status(200).json({ message: "If that email exists, a reset link was sent." });
+        }
+
+        // Generate a fake/temporary reset token and URL for now (or real logic if needed)
+        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+
+        // Send the email
+        const { sendPasswordResetEmail } = await import('../services/emailService.js');
+        await sendPasswordResetEmail(user.email, resetUrl);
+
+        res.status(200).json({ message: "Password reset link sent to your email!" });
+    } catch (error) {
+        logger.error({ err: error }, 'Forgot password failed');
+        res.status(500).json({ message: "Server Error" });
+    }
+};

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
+import api from "../api.js";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { motion } from "framer-motion";
@@ -10,8 +10,6 @@ import { Label } from "@/components/ui/label";
 import { UserPlus, Leaf, Eye, EyeOff } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import logo from "../assets/Zerolylogo.png";
-
-const API_BASE_URL = "http://localhost:5001/api";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
@@ -50,7 +48,7 @@ const RegisterPage = () => {
     }
     setLoading(true);
     try {
-      const { data } = await axios.post(`${API_BASE_URL}/users/register`, {
+      const { data } = await api.post("/api/users/register", {
         name,
         email,
         password,
@@ -249,7 +247,7 @@ const RegisterPage = () => {
                 onSuccess={async (credentialResponse) => {
                   try {
                     setLoading(true);
-                    const { data } = await axios.post(`${API_BASE_URL}/users/google-login`, {
+                    const { data } = await api.post("/api/users/google-login", {
                       token: credentialResponse.credential,
                     });
             
