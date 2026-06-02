@@ -8,7 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 import logo from "../assets/Zerolylogo.png";
 import NotificationBtn from "./NotificationBtn";
 import { ModeToggle } from "./ModeToggle";
-import { Coins, Wallet } from "lucide-react";
+import { Coins, Wallet, MessageCircle } from "lucide-react";
 
 const Header = () => {
   const { userInfo, logout } = useContext(AuthContext) ?? {};
@@ -153,6 +153,13 @@ const Header = () => {
                 className={glassyNavButton}
               >
                 My Requests
+              </Link>
+
+              <Link
+                to="/messages"
+                className="relative text-gray-600 hover:text-emerald-500 transition-colors p-2 rounded-full hover:bg-secondary/50 flex items-center justify-center"
+              >
+                <MessageCircle className="w-7 h-7" />
               </Link>
 
               <Link
