@@ -18,6 +18,7 @@ const itemSchema = new mongoose.Schema({
     description: { type: String, required: true },
     category: { type: String, required: true },
     imageUrl: { type: String, required: true },
+    imagePublicId: { type: String, default: "" }, // Cloudinary public_id for server-side deletion
     address: { type: String, required: true },
     ecoSeeds: { type: Number, required: true, default: 10, min: 0 },
 

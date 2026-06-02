@@ -126,6 +126,7 @@ const UploadPage = () => {
 
     try {
       let imageUrl = "";
+      let imagePublicId = "";
 
       if (image) {
         const { data: signData } = await api.get(`${API_BASE_URL}/upload/signature`, {
@@ -147,6 +148,8 @@ const UploadPage = () => {
         // Auto-optimize: WebP format, auto quality, max width 1200px to save bandwidth
         const rawUrl = cloudinaryRes.data.secure_url;
         imageUrl = rawUrl.replace('/upload/', '/upload/q_auto,f_auto,w_1200/');
+        // Store public_id so the server can destroy the asset on listing deletion
+        imagePublicId = cloudinaryRes.data.public_id;
       }
 
       const itemData = {
@@ -157,6 +160,7 @@ const UploadPage = () => {
         location: [location.lng, location.lat],
         address: location.address || "",
         imageUrl: imageUrl,
+        imagePublicId: imagePublicId,
         ecoSeeds: Number(formData.ecoSeeds),
       };
 

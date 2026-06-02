@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import Wishlist from "../models/Wishlist.js";
 import logger from "../utils/logger.js";
 import { sendWishlistMatchEmail } from "../services/emailService.js";
+import cloudinary from "../config/cloudinary.js";
 
 
 export const getItemById = async(req, res) => {
@@ -25,13 +26,14 @@ export const getItemById = async(req, res) => {
 
 export const createItem = async(req, res) => {
     try {
-        const { name, description, category, imageUrl, address, location, ecoSeeds } = req.body;
+        const { name, description, category, imageUrl, imagePublicId, address, location, ecoSeeds } = req.body;
 
         const item = new Item({
             name,
             description,
             category,
             imageUrl,
+            imagePublicId,
             address,
             ecoSeeds: ecoSeeds || 10,
             location: location ? { type: 'Point', coordinates: location } : undefined,
@@ -154,6 +156,14 @@ export const deleteItem = async(req, res) => {
             await user.save();
         }
 
+        if (item.imagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(item.imagePublicId);
+            } catch (cloudErr) {
+                logger.error({ err: cloudErr }, 'Failed to delete image from Cloudinary for item %s', item._id);
+            }
+        }
+
         await item.deleteOne();
         res.json({ message: "Item removed successfully" });
     } catch (error) {
@@ -213,6 +223,7 @@ export const addItemReview = async(req, res) => {
         };
 
         item.reviews.push(review);
+        item.markModified('reviews');
         item.calcRating();
         await item.save();
         res.status(201).json({
